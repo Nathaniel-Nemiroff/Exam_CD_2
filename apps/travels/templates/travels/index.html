@@ -1,0 +1,74 @@
+<html>
+	<body>
+		<h2>Hello {{user.name}}</h2>
+		<a href='{%url "users:logout"%}'>Logout</a>
+
+		<h4>Your Trip Schedules</h4>
+		<table>
+			<th>Destination</th>
+			<th>Travel Start Date</th>
+			<th>Travel End Date</th>
+			<th>Plan</th>
+
+			{% for travel in owned %}
+				<tr>
+					<td><a href="{%url 'travels:dest' id=travel.id%}">
+						{{travel.destination}}</a>
+					</td>
+					<td>{{travel.start_date|date:"M d Y"}}</td>
+					<td>{{travel.end_date|date:"M d Y"}}</td>
+					<td>{{travel.description}}</td>
+				</tr>
+			{% endfor %}
+			{% for travel in joined %}
+				<tr>
+					<!--link to travel-->
+					<td><a href="{%url 'travels:dest' id=travel.id%}">
+						{{travel.destination}}</a>
+					</td>
+					<td>{{travel.start_date|date:"M d Y"}}</td>
+					<td>{{travel.end_date|date:"M d Y"}}</td>
+					<td>{{travel.description}}</td>
+				</tr>
+			{% endfor %}
+			
+		</table>
+
+
+		<h4>Other User's Travel Plans</h4>
+		<table>
+
+			<th>Name</th>
+			<th>Destination</th>
+			<th>Travel Start Date</th>
+			<th>Travel End Date</th>
+			<th>Do you want to join?</th>
+
+			{% for travel in travels %}
+				{% if not travel.owner == user %}
+				<tr>
+					<td>{{travel.owner}}</td>
+					<!--link to travel-->
+					<td><a href="{%url 'travels:dest' id=travel.id%}">
+						{{travel.destination}}</a>
+					</td>
+					<td>{travel.start_date|date:"M d Y"}}</td>
+					<td>{{travel.end_date|date:"M d Y"}}</td>
+					<!-- link to join -->
+					<td><a href="{% url 'travels:join' id=travel.id%}">
+						Join</a>
+					</td>
+				</tr>
+				{% endif %}
+			{% endfor %}
+			
+		</table>
+
+
+		<form action='/travels/add' method='post'>
+			{% csrf_token %}
+			<input type=submit value='Add Travel Plan'>
+		</form>
+
+	</body>
+</html>
